@@ -1,4 +1,4 @@
-import { Category } from "./category.interface";
+import { Category } from "./category-interface";
 
 export interface Book {
   id: number;

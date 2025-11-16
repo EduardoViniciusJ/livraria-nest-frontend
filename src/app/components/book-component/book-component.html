@@ -1,1 +1,24 @@
-<p>book-component works!</p>
+<p-table [value]="(books$ | async) ?? []" [paginator]="true" [rows]="5">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Image</th>
+      <th>Price</th>
+      <th>Categories</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-book>
+    <tr>
+      <td>{{ book.title }}</td>
+      <td>{{ book.author }}</td>
+      <td>
+        <img [src]="book.imageUrl || 'https://via.placeholder.com/50x70'" width="50" height="70" />
+      </td>
+      <td>R$ {{ book.price | number:'1.2-2' }}</td>
+      <td>
+        <p-chip *ngFor="let cat of book.categories" [label]="cat.name" class="mr-1"></p-chip>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
