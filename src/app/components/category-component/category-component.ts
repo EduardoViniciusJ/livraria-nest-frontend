@@ -22,5 +22,17 @@ import { RatingModule } from 'primeng/rating';
 })
 export class CategoryComponent {
   categoryService = inject(CategoryService);
+
   categories$ = this.categoryService.getCategory();
+
+  deleteCategory(category: any) {
+  this.categoryService.deleteCategory(category.id).subscribe({
+    next: () => {
+      this.categories$ = this.categoryService.getCategory(); 
+    },
+    error: (err) => {
+      console.error('Erro ao excluir categoria', err);
+    }
+  });
+}
 }

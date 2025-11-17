@@ -1,4 +1,8 @@
 <div class="border p-5">
+  <div class="flex justify-end mb-4">
+    <p-button label="Novo Livro" icon="pi pi-plus" severity="success"></p-button>
+  </div>
+
   <p-table
       [value]="(books$ | async) ?? []"
       [rows]="5"
@@ -43,7 +47,7 @@
               <td style="text-align: center;">
                   <div style="display: inline-flex; gap: 4px;"> 
                       <p-button label="Editar" size="small" severity="info" /> 
-                      <p-button label="Excluir" size="small" severity="danger" />  
+                      <p-button label="Excluir" size="small" severity="danger" (click)="deleteBook(book)" />
                   </div>
               </td>
           </tr>
