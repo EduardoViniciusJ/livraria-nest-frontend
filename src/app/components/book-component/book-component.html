@@ -1,56 +1,58 @@
-<p-table
-    [value]="(books$ | async) ?? []"
-    [rows]="5"
-    [paginator]="true"
-    [tableStyle]="{ 'min-width': '50rem' }"
-    dataKey="id"
-    [rowHover]="true"
-    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} livros"
-    [showCurrentPageReport]="true"
->
-<ng-template #header>
-        <tr>
-            <th style="min-width: 3rem">Capa</th>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Preço</th>
-            <th>Categorias</th>
-            <th style="text-align: center;">Ações</th>
-        </tr>
-</ng-template>
+<div class="border p-5">
+  <p-table
+      [value]="(books$ | async) ?? []"
+      [rows]="5"
+      [paginator]="true"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      dataKey="id"
+      [rowHover]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} livros"
+      [showCurrentPageReport]="true"
+  >
+      <ng-template #header>
+          <tr>
+              <th style="min-width: 3rem">Capa</th>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Preço</th>
+              <th style="min-width: 3rem">Categorias</th>
+              <th style="text-align: center;">Ações</th>
+          </tr>
+      </ng-template>
 
-<ng-template #body let-book>
-        <tr>
-            <td>
-                <img 
-                    [src]="getImageUrl(book.imageUrl)"  
-                    style="width: 70px; height: 80px; object-fit: cover;"
-                />
-            </td>
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.price | currency:'BRL' }}</td>
-            <td>
-                @for (category of book.categories; track category.id) {
-                    <p-tag 
-                         [value]="category.name" 
-                         severity="secondary" 
-                         style="margin-right: 10px;">
-                    </p-tag>
-                }
-            </td>
-                <td style="text-align: center;">
-                    <div style="display: inline-flex; gap: 4px;"> 
-                        <p-button label="Editar" size="small" severity="info" /> 
-                        <p-button label="Excluir" size="small" severity="danger" />  
-                    </div>
-                </td>
-            </tr>
-</ng-template>
+      <ng-template #body let-book>
+          <tr>
+              <td>
+                  <img 
+                      [src]="getImageUrl(book.imageUrl)"  
+                      style="width: 70px; height: 80px; object-fit: cover;"
+                  />
+              </td>
+              <td>{{ book.title }}</td>
+              <td>{{ book.author }}</td>
+              <td>{{ book.price | currency:'BRL' }}</td>
+              <td>
+                  @for (category of book.categories; track category.id) {
+                      <p-tag 
+                           [value]="category.name" 
+                           severity="secondary" 
+                           style="margin-right: 10px;">
+                      </p-tag>
+                  }
+              </td>
+              <td style="text-align: center;">
+                  <div style="display: inline-flex; gap: 4px;"> 
+                      <p-button label="Editar" size="small" severity="info" /> 
+                      <p-button label="Excluir" size="small" severity="danger" />  
+                  </div>
+              </td>
+          </tr>
+      </ng-template>
 
-    <ng-template #footer>
-        <tr>
-            <td colspan="7">Total de livros: {{ (books$ | async)?.length || 0 }}</td>
-        </tr>
-    </ng-template>
-</p-table>
+      <ng-template #footer>
+          <tr>
+              <td colspan="7">Total de livros: {{ (books$ | async)?.length || 0 }}</td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>
