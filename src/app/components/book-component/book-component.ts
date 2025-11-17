@@ -6,11 +6,18 @@ import { BookService } from '../../services/book-service';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
+import { DataViewModule } from 'primeng/dataview';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { FormsModule } from '@angular/forms';
+import { ToolbarModule } from 'primeng/toolbar';
+import { RatingModule } from 'primeng/rating';
+import { FileUploadModule } from 'primeng/fileupload';
+
 
 
 @Component({
   selector: 'app-book-component',
-  imports: [AsyncPipe, TableModule, ChipModule, ButtonModule, CardModule, TagModule, CommonModule],
+  imports: [AsyncPipe, TableModule, ChipModule, ButtonModule, CardModule, TagModule, CommonModule, DataViewModule, ButtonModule, SelectButtonModule, FormsModule, ToolbarModule, FileUploadModule, RatingModule],
   standalone: true, 
   templateUrl: './book-component.html',
   styleUrl: './book-component.css',
@@ -20,5 +27,11 @@ export class BookComponent {
   bookService = inject(BookService);  
   books$ = this.bookService.getBooks();
  
+
+  getImageUrl(imageName: string | undefined): string {
+  if (!imageName) {
+    return '/images/Image-not-found.png'; // retorna imagem padrão se nao tiver imagem do livro 
+  }
+  return `/images/${imageName}`; 
+  }
 }
-  

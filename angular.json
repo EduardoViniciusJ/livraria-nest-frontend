@@ -21,10 +21,13 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "public",
+                "output": "/"
+
               }
             ],
             "styles": [
+              "node_modules/primeflex/primeflex.css",
               "src/styles.css"
             ]
           },
