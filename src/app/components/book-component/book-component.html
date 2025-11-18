@@ -1,62 +1,107 @@
-<div class="border p-5">
-  <div class="flex justify-end mb-4">
-    <p-button label="Novo Livro" icon="pi pi-plus" severity="success"></p-button>
-  </div>
+<p-toast></p-toast>
 
+<div class="border p-5">
+
+  <div class="flex items-center justify-between mb-4">
+
+    <!-- Botão para abrir o diálogo de Novo Livro -->
+    <p-button 
+      label="Novo Livro" 
+      icon="pi pi-plus" 
+      severity="success"
+      (click)="openDialog()"
+    ></p-button>
+
+    <!-- Campo de pesquisa para filtrar livros pelo título -->
+    <span class="p-input-icon-left" style="margin-left: 1rem;">
+      <i class="pi pi-search"></i>
+      <input 
+        pInputText 
+        type="text" 
+        placeholder="Filtrar por título..." 
+        (input)="table.filter($event.target.value, 'title', 'contains')"
+        style="width: 400px;"
+      />
+    </span>
+  </div>
+  
+  <!-- Tabela de livros -->
   <p-table
+      #table
       [value]="(books$ | async) ?? []"
       [rows]="5"
       [paginator]="true"
-      [tableStyle]="{ 'min-width': '50rem' }"
+      [tableStyle]="{ 'min-width': '60rem' }"
       dataKey="id"
       [rowHover]="true"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} livros"
       [showCurrentPageReport]="true"
   >
-      <ng-template #header>
+      <ng-template pTemplate="header">
           <tr>
-              <th style="min-width: 3rem">Capa</th>
-              <th>Título</th>
-              <th>Autor</th>
-              <th>Preço</th>
-              <th style="min-width: 3rem">Categorias</th>
-              <th style="text-align: center;">Ações</th>
+              <th>Capa</th>
+              <th pSortableColumn="title">
+                  Título
+                  <p-sortIcon field="title"></p-sortIcon>
+              </th>
+              <th pSortableColumn="author">
+                  Autor
+                  <p-sortIcon field="author"></p-sortIcon>
+              </th>
+              <th pSortableColumn="price">
+                  Preço
+                  <p-sortIcon field="price"></p-sortIcon>
+              </th>
+              <th>Categorias</th>
+              <th style="text-align:center;">Ações</th>
           </tr>
       </ng-template>
 
-      <ng-template #body let-book>
+      <!-- Corpo da tabela -->
+      <ng-template pTemplate="body" let-book>
           <tr>
               <td>
                   <img 
-                      [src]="getImageUrl(book.imageUrl)"  
-                      style="width: 70px; height: 80px; object-fit: cover;"
+                    [src]="getImageUrl(book.imageUrl)" 
+                    style="width: 70px; height: 80px; object-fit: cover;"
                   />
               </td>
               <td>{{ book.title }}</td>
               <td>{{ book.author }}</td>
               <td>{{ book.price | currency:'BRL' }}</td>
               <td>
-                  @for (category of book.categories; track category.id) {
-                      <p-tag 
-                           [value]="category.name" 
-                           severity="secondary" 
-                           style="margin-right: 10px;">
-                      </p-tag>
-                  }
+                  <ng-container *ngFor="let category of book.categories">
+                      <p-tag [value]="category.name" severity="info" style="margin-right: 4px;"></p-tag>
+                  </ng-container>
               </td>
-              <td style="text-align: center;">
-                  <div style="display: inline-flex; gap: 4px;"> 
-                      <p-button label="Editar" size="small" severity="info" /> 
-                      <p-button label="Excluir" size="small" severity="danger" (click)="deleteBook(book)" />
+              <td style="text-align:center;">
+                  <div style="display: inline-flex; gap: 4px;">
+                      <p-button label="Editar" severity="info" size="small" (click)="openDialog(book)"></p-button>
+                      <p-button label="Excluir" severity="danger" size="small" (click)="deleteBook(book)"></p-button>
                   </div>
               </td>
           </tr>
       </ng-template>
 
-      <ng-template #footer>
+      <ng-template pTemplate="footer">
           <tr>
               <td colspan="7">Total de livros: {{ (books$ | async)?.length || 0 }}</td>
           </tr>
       </ng-template>
   </p-table>
 </div>
+
+<!-- Diálogo para criar ou editar livros -->
+<p-dialog 
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [style]="{ width: '32rem' }"
+  [header]="selectedBook ? 'Editar Livro' : 'Novo Livro'"
+>
+  <app-book-form
+    [book]="selectedBook"
+    [categories]="(categories$ | async) ?? []"
+    (cancel)="closeDialog()"
+    (submit)="saveBook($event)"
+  ></app-book-form>
+</p-dialog>
