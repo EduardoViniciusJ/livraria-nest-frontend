@@ -16,7 +16,6 @@ Inclui CRUD completo para livros e categorias, formulários reativos, diálogos 
 ## ⚙️ Funcionalidades
 
 ### 📘 Livros
-### 📘 Livros
 - Exibição de todos os livros com as categorias, em uma tabela.  
 - Criação e edição de livros com formulário simples.  
 - Escolha de uma ou mais categorias (máx. 3).  
