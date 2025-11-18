@@ -1,0 +1,41 @@
+<form [formGroup]="form" class="flex flex-column gap-3">
+
+  <div>
+    <label class="font-bold">Nome da Categoria</label>
+    <input pInputText formControlName="name" class="w-full" />
+
+    @if (form.controls['name'].hasError('required') && form.controls['name'].touched) {
+      <small class="p-error">O nome da categoria é obrigatório.</small>
+    }
+
+    @if (form.controls['name'].hasError('minlength') && form.controls['name'].touched) {
+      <small class="p-error">A categoria deve ter pelo menos 1 caractere.</small>
+    }
+
+    @if (form.controls['name'].hasError('maxlength') && form.controls['name'].touched) {
+      <small class="p-error">A categoria deve ter no máximo 254 caracteres.</small>
+    }
+
+    @if (form.controls['name'].hasError('pattern') && form.controls['name'].touched) {
+      <small class="p-error">O nome não pode conter apenas espaços.</small>
+    }
+  </div>
+
+  <div class="flex justify-end mt-3">
+
+    <p-button 
+      label="Cancelar"
+      severity="secondary"
+      class="mr-2"
+      (click)="onCancel()"
+    ></p-button>
+
+    <p-button 
+      [label]="isEditing ? 'Salvar Alterações' : 'Criar Categoria'"
+      severity="success"
+      (click)="onSubmit()"
+    ></p-button>
+
+  </div>
+
+</form>
