@@ -8,16 +8,28 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CategoryService {
-  private http = inject(HttpClient);  
+  private http = inject(HttpClient);
 
-  private readonly urlAPI = `${environment.API_URL}/category`; 
+  private readonly urlAPI = `${environment.API_URL}/category`;
 
-  getCategory() : Observable<Category[]> {
-    return this.http.get<Category[]>(this.urlAPI);  
-  }  
-
-  deleteCategory(id: number): Observable<any> {
-  return this.http.delete(`${this.urlAPI}/delete/${id}`);
+  // GET ALL
+  getCategory(): Observable<Category[]> {
+    return this.http.get<Category[]>(this.urlAPI);
   }
 
+  getCategoryById(id: number): Observable<Category> {
+    return this.http.get<Category>(`${this.urlAPI}/${id}`);
+  }
+
+  createCategory(data: { name: string }): Observable<Category> {
+    return this.http.post<Category>(`${this.urlAPI}/create`, data);
+  }
+
+  updateCategory(id: number, data: { name: string }): Observable<Category> {
+    return this.http.put<Category>(`${this.urlAPI}/update/${id}`, data);
+  }
+
+  deleteCategory(id: number): Observable<any> {
+    return this.http.delete(`${this.urlAPI}/delete/${id}`);
+  }
 }

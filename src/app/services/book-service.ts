@@ -8,17 +8,26 @@ import { Book } from '../interfaces/book-interface';
   providedIn: 'root',
 })
 export class BookService {
-  
-  private http = inject(HttpClient);  
+  private http = inject(HttpClient);
+  private readonly urlAPI = `${environment.API_URL}/book`;
 
-  private readonly urlAPI = `${environment.API_URL}/book`; 
-
-  getBooks() : Observable<Book[]> {
-    return this.http.get<Book[]>(this.urlAPI);  
+  getBooks(): Observable<Book[]> {
+    return this.http.get<Book[]>(this.urlAPI);
   }
 
-  deleteBook(id: number) : Observable<any> {
+  getBookById(id: number): Observable<Book> {
+    return this.http.get<Book>(`${this.urlAPI}/${id}`);
+  }
+
+  createBook(data: any): Observable<Book> {
+    return this.http.post<Book>(`${this.urlAPI}/create`, data);
+  }
+
+  updateBook(id: number, data: any): Observable<Book> {
+    return this.http.put<Book>(`${this.urlAPI}/update/${id}`, data);
+  }
+
+  deleteBook(id: number): Observable<any> {
     return this.http.delete(`${this.urlAPI}/delete/${id}`);
   }
-
 }
