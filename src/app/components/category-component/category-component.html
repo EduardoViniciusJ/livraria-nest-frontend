@@ -1,16 +1,14 @@
 <p-toast></p-toast>
-<div class="border p-5">
 
+<div class="border p-5">
   <div class="flex items-center justify-between mb-4">
-    <!-- Botão para abrir o diálogo de Nova Categoria -->
     <p-button 
       label="Nova Categoria" 
       icon="pi pi-plus" 
       severity="success"
       (click)="openDialog()"
     ></p-button>
-    
-    <!-- Campo de pesquisa para filtrar pelo nome -->
+
     <span class="p-input-icon-left" style="margin-left: 1rem;">
       <i class="pi pi-search"></i>
       <input 
@@ -22,8 +20,7 @@
       />
     </span>
   </div>
-  
-  <!-- Tabela de categorias -->
+
   <p-table
       #table
       [value]="(categories$ | async) ?? []"
@@ -44,32 +41,19 @@
               <th style="text-align: center;">Ações</th>
           </tr>
       </ng-template>
-      
-      <!-- Corpo da tabela -->
+
       <ng-template pTemplate="body" let-category>
           <tr>
               <td>{{ category.name }}</td>
               <td style="text-align: center;">
                   <div style="display: inline-flex; gap: 4px;">
-                      <p-button 
-                        label="Editar" 
-                        size="small" 
-                        severity="info"
-                        (click)="openDialog(category)"
-                      ></p-button>
-
-                      <p-button 
-                        label="Excluir" 
-                        size="small" 
-                        severity="danger"
-                        (click)="deleteCategory(category)"
-                      ></p-button>
+                      <p-button label="Editar" size="small" severity="info" (click)="openDialog(category)"></p-button>
+                      <p-button label="Excluir" size="small" severity="danger" (click)="deleteCategory(category)"></p-button>
                   </div>
               </td>
           </tr>
       </ng-template>
-      
-      <!-- Rodapé da tabela -->
+
       <ng-template pTemplate="footer">
           <tr>
               <td colspan="2">Total: {{ (categories$ | async)?.length || 0 }}</td>
@@ -78,33 +62,15 @@
   </p-table>
 </div>
 
-
-<!-- Diálogo para criar ou editar categoria -->
 <p-dialog 
-  header="{{ selectedCategory ? 'Editar Categoria' : 'Nova Categoria' }}"
   [(visible)]="dialogVisible"
   [modal]="true"
   [style]="{ width: '25rem' }"
+  [header]="selectedCategory ? 'Editar Categoria' : 'Nova Categoria'"
 >
-  <form [formGroup]="form" class="flex flex-column gap-3">
-      <div>
-          <label class="font-bold">Nome</label>
-          <input pInputText formControlName="name" class="w-full" />
-      </div>
-
-      <div class="flex justify-end mt-3">
-          <p-button 
-            label="Cancelar" 
-            severity="secondary"
-            class="mr-2"
-            (click)="closeDialog()"
-          ></p-button>
-
-          <p-button 
-            label="Salvar" 
-            severity="success"
-            (click)="saveCategory()"
-          ></p-button>
-      </div>
-  </form>
+  <app-category-form
+    [category]="selectedCategory"
+    (cancel)="closeDialog()"
+    (submit)="saveCategory($event)"
+  ></app-category-form>
 </p-dialog>

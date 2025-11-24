@@ -30,7 +30,6 @@ export class BookComponent implements OnInit {
 
   books$!: Observable<Book[]>;
   categories$!: Observable<{ id: number; name: string }[]>;
-
   dialogVisible = false;
   selectedBook: Book | null = null;
 

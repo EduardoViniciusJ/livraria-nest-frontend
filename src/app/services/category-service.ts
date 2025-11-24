@@ -12,7 +12,7 @@ export class CategoryService {
 
   private readonly urlAPI = `${environment.API_URL}/category`;
 
-  // GET ALL
+
   getCategory(): Observable<Category[]> {
     return this.http.get<Category[]>(this.urlAPI);
   }

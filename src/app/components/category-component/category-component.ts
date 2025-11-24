@@ -1,14 +1,15 @@
-import { Component, inject } from '@angular/core';
-import { CategoryService } from '../../services/category-service';
+import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { Category } from '../../interfaces/category-interface';
+import { CategoryService } from '../../services/category-service';
 import { CategoryFormComponent } from '../category-form-category/category-form-category';
+import { Category } from '../../interfaces/category-interface';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-category-component',
@@ -16,101 +17,73 @@ import { CategoryFormComponent } from '../category-form-category/category-form-c
   providers: [MessageService],
   imports: [
     AsyncPipe, CommonModule, TableModule, ButtonModule, DialogModule,
-    FormsModule, ReactiveFormsModule, ToastModule,   
+    ToastModule, CategoryFormComponent
   ],
   templateUrl: './category-component.html',
-  styleUrl: './category-component.css',
+  styleUrls: ['./category-component.css'],
 })
-export class CategoryComponent {
+export class CategoryComponent implements OnInit {
+  private categoryService = inject(CategoryService);
+  private messageService = inject(MessageService);
 
-  categoryService = inject(CategoryService);
-
-  fb = inject(FormBuilder);
-
-  messageService = inject(MessageService);
-
-  categories$ = this.categoryService.getCategory();
-
+  categories$!: Observable<Category[]>;
   dialogVisible = false;
   selectedCategory: Category | null = null;
 
-  form: FormGroup = this.fb.group({
-    name: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(1),
-        Validators.maxLength(254),
-        Validators.pattern(/^(?!\s+$).+/)
-      ]
-    ]
-  });
+  ngOnInit() {
+    this.loadCategories();
+  }
 
-  // Abre o form para criar ou editar uma categoria
+  private loadCategories() {
+    this.categories$ = this.categoryService.getCategory().pipe(
+      catchError(() => of([]))
+    );
+  }
+
   openDialog(category: Category | null = null) {
     this.selectedCategory = category;
-
-    if (category) {
-      this.form.patchValue(category);
-    } else {
-      this.form.reset();
-    }
-
     this.dialogVisible = true;
   }
 
-  // Fecha o form e reseta 
   closeDialog() {
     this.dialogVisible = false;
     this.selectedCategory = null;
-    this.form.reset();
   }
 
-  // Salva categoria 
-  saveCategory() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const formData = {
-      name: this.form.value.name.trim()
-    };
-
+  saveCategory(data: { name: string }) {
     if (this.selectedCategory) {
-      this.categoryService.updateCategory(this.selectedCategory.id, formData).subscribe({
+      this.categoryService.updateCategory(this.selectedCategory.id, data).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Categoria atualizada com sucesso!' });
           this.closeDialog();
-          this.categories$ = this.categoryService.getCategory();
+          this.loadCategories();
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error.message || 'Erro ao atualizar categoria.' });
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || 'Erro ao atualizar categoria.' });
         }
       });
     } else {
-      this.categoryService.createCategory(formData).subscribe({
+      this.categoryService.createCategory(data).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Categoria criada com sucesso!' });
           this.closeDialog();
-          this.categories$ = this.categoryService.getCategory();
+          this.loadCategories();
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error.message || 'Erro ao criar categoria.' });
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || 'Erro ao criar categoria.' });
         }
       });
     }
   }
 
-  // Exclui uma categoria
   deleteCategory(category: Category) {
     this.categoryService.deleteCategory(category.id).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Categoria excluída com sucesso!' });
-        this.categories$ = this.categoryService.getCategory();
+        this.loadCategories();
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Erro ao excluir', detail: err.error.message });
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || 'Erro ao excluir categoria.' });
       }
     });
   }
